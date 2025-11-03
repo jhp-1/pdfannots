@@ -9,7 +9,7 @@ from . import __doc__, __version__, process_file
 from .printer import Printer
 from .printer.markdown import MarkdownPrinter, GroupedMarkdownPrinter
 from .printer.json import JsonPrinter
-
+from .printer.org import OrgPrinter, GroupedOrgPrinter  # Add this line
 
 MD_FORMAT_ARGS = frozenset([
     'condense',
@@ -51,8 +51,8 @@ def parse_args() -> typ.Tuple[argparse.Namespace, LAParams]:
                         "columns per page. If unset, PDFMiner's layout detection logic is used.")
     g.add_argument("--keep-hyphens", dest="remove_hyphens", default=True, action="store_false",
                    help="When capturing text across a line break, don't attempt to remove hyphens.")
-    g.add_argument("-f", "--format", choices=["md", "json"], default="md",
-                   help="Output format (default: markdown).")
+    g.add_argument("-f", "--format", choices=["md", "json", "org"], default="org",
+                   help="Output format (default: org).")
 
     g = p.add_argument_group('Options controlling markdown output')
     mutex_group = g.add_mutually_exclusive_group()
@@ -155,6 +155,10 @@ def main() -> None:
         printer = JsonPrinter(
             remove_hyphens=args.remove_hyphens,
             output_codec=args.output.encoding)
+    elif args.format == "org":
+        orgargs = {k: getattr(args, k) for k in MD_FORMAT_ARGS}
+        printer = (GroupedOrgPrinter if args.group else OrgPrinter)(**orgargs)
+
 
     def write_if_nonempty(s: str) -> None:
         if s:

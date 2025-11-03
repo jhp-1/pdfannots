@@ -16,7 +16,7 @@ import pdfannots.utils
 from pdfannots.types import AnnotationType
 from pdfannots.printer.markdown import MarkdownPrinter, GroupedMarkdownPrinter
 from pdfannots.printer.json import JsonPrinter
-
+from pdfannots.printer.org import OrgPrinter
 
 class UnitTests(unittest.TestCase):
     def test_decode_datetime(self) -> None:
